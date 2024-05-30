@@ -18,7 +18,7 @@ const wagmiConfig = defaultWagmiConfig({
   projectId,
   chains,
   metadata: {
-    name: "test",
+    name: "pait",
   },
 });
 

@@ -1,20 +1,47 @@
-import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { useEffect } from "react";
-import { useNetwork } from "wagmi";
+import { useEffect, useCallback, useState } from "react";
+import { useWeb3ModalEvents, useWeb3Modal } from '@web3modal/wagmi/react'
+
+
 import "./App.css";
 
 function App() {
-  const { open } = useWeb3Modal();
-  const { chain } = useNetwork();
+  const [isConneted, setConnected] = useState(false);
+  const { open } = useWeb3Modal()
+  const event = new Event('CONNECT_SUCCESS');
+
+
+  const events = useWeb3ModalEvents();
+
+
   useEffect(() => {
-    console.log("switched to " + chain?.id);
-  }, [chain?.id]);
+    console.log(events.data.event);
+
+    if (events.data.event === 'CONNECT_SUCCESS') {
+      document.dispatchEvent(event);
+      setConnected(true)
+    }
+  }, [events, setConnected])
+
+
+
+  const handleBtnClick = useCallback(() => open({ view: 'Connect' }), [open])
+
+
+
   return (
-    <div className="App">
-      <w3m-button />
-      <button onClick={() => open({ view: "Networks" })}>Send</button>
-      <p>{chain?.name}</p>
-    </div>
+    <>
+      <div className={`common-white-btn form-1_content_form-block_form_btn-connect ${isConneted && 'connected'}`} style={{ pointerEvents: isConneted ? 'none' : 'auto'}} onClick={handleBtnClick}>
+        {
+          isConneted
+            ?
+            <>
+              <img src="https://uploads-ssl.webflow.com/6645e7046629ba71066f47ff/66582458354559d9565f31bc_Vector.svg" className="form-1_content_form-block_form_btn-connect_img"/> connected
+            </>
+            :
+            'Connect Wallet'
+        }
+      </div>
+    </>
   );
 }
 
