@@ -1,5 +1,9 @@
 import { useEffect, useCallback, useState } from "react";
-import { useWeb3ModalEvents, useWeb3Modal } from '@web3modal/wagmi/react'
+
+
+import { useWeb3Modal } from '@web3modal/react'
+import { useWalletClient } from 'wagmi'
+
 
 
 import "./App.css";
@@ -7,20 +11,23 @@ import "./App.css";
 function App() {
   const [isConneted, setConnected] = useState(false);
   const { open } = useWeb3Modal()
+  const result = useWalletClient()
+
+
   const event = new Event('CONNECT_SUCCESS');
 
 
-  const events = useWeb3ModalEvents();
-
 
   useEffect(() => {
-    console.log(events.data.event);
+    console.log(result.isSuccess)
 
-    if (events.data.event === 'CONNECT_SUCCESS') {
+    if (result.isSuccess) {
       document.dispatchEvent(event);
       setConnected(true)
+    } else  {
+      setConnected(false)
     }
-  }, [events, setConnected])
+  }, [result, setConnected])
 
 
 
@@ -30,7 +37,7 @@ function App() {
 
   return (
     <>
-      <div className={`common-white-btn form-1_content_form-block_form_btn-connect ${isConneted && 'connected'}`} style={{ pointerEvents: isConneted ? 'none' : 'auto'}} onClick={handleBtnClick}>
+      <div className={`common-white-btn form-1_content_form-block_form_btn-connect ${isConneted && 'connected'}`} style={{ pointerEvents: isConneted ? 'none' : 'auto'}}  onClick={handleBtnClick}>
         {
           isConneted
             ?

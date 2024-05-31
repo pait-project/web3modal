@@ -1,37 +1,47 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
+import App from './App';
 
-import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { Web3Modal } from '@web3modal/react';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { arbitrum, mainnet, polygon } from 'viem/chains';
+import { Web3Button } from '@web3modal/react';
 
-import { WagmiConfig } from "wagmi";
-import { arbitrum, mainnet, zkSyncTestnet } from "wagmi/chains";
 
-// Replace this project ID with yours
-// from cloud.walletconnect.com
-const projectId = "5b9d2a7e594a65f3d634489802d445c9";
+function HomePage() {
+    return <Web3Button />
+}
 
-const chains = [mainnet, arbitrum, zkSyncTestnet];
+const chains = [arbitrum, mainnet, polygon];
+const projectId = '5b9d2a7e594a65f3d634489802d445c9';
 
-const wagmiConfig = defaultWagmiConfig({
-  projectId,
-  chains,
-  metadata: {
-    name: "pait",
-  },
-});
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+const wagmiConfig = createConfig({
+    autoConnect: true,
+    connectors: w3mConnectors({ projectId, chains }),
+    publicClient
+})
+const ethereumClient = new EthereumClient(wagmiConfig, chains)
 
-createWeb3Modal({
-  chains,
-  projectId,
-  wagmiConfig,
-});
+function Main() {
+    return (
+        <>
+            <WagmiConfig config={wagmiConfig}>
+                <App />
+            </WagmiConfig>
+
+            <Web3Modal
+                projectId={projectId}
+                ethereumClient={ethereumClient}
+            />
+        </>
+    )
+}
+
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <WagmiConfig config={wagmiConfig}>
-      <App />
-    </WagmiConfig>
-  </React.StrictMode>,
+    <React.StrictMode>
+      <Main/>
+    </React.StrictMode>,
 );
