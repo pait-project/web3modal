@@ -16,6 +16,8 @@ function HomePage() {
 const chains = [arbitrum, mainnet, polygon];
 const projectId = '5b9d2a7e594a65f3d634489802d445c9';
 
+const explorerRecommendedWalletIds = ['a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393'];
+
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
 const wagmiConfig = createConfig({
     autoConnect: true,
@@ -34,6 +36,7 @@ function Main() {
             <Web3Modal
                 projectId={projectId}
                 ethereumClient={ethereumClient}
+                explorerRecommendedWalletIds={explorerRecommendedWalletIds}
             />
         </>
     )
